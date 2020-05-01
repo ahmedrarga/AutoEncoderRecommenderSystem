@@ -5,7 +5,6 @@ from keras.models import model_from_json
 
 
 import os
-import pandas as pd
 import matplotlib.pyplot as plt
 
 
@@ -41,7 +40,7 @@ class AutoEncoder:
         # Latent space
         latent_space = Dense(self.ENC_LAYER2, activation='selu', name='LatentSpace')(encoder_layer)
         latent_space = Dropout(0.8, name="Dropout")(latent_space)
-        # latent_space = Dropout(0.8, name="Dropout2")(latent_space)
+        latent_space = Dropout(0.8, name="Dropout2")(latent_space)
         # Decoder
         decoder_layer = Dense(self.ENC_LAYER1, activation='selu', name='DecoderLayer')(latent_space)
 

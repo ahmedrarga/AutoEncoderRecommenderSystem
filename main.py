@@ -1,10 +1,10 @@
-from flask import Flask, jsonify, request, sessions
+from flask import Flask, jsonify, request
 from recommender.src.System import get_popular_movies, popular_movies, train
 app = Flask(__name__)
 
 
 @app.route('/')
-def hello_world():
+def index():
     return 'Movie recommender system using deep auto-encoders with collaborative filtering approach'
 
 

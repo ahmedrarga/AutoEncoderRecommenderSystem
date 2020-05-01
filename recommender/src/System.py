@@ -1,14 +1,11 @@
-from recommender.src.Model import AutoEncoder
-from recommender.src.DataHelper import get_movies_for_user, get_popular_movies, popular_movies
 import pandas as pd
-from sklearn.metrics.pairwise import cosine_similarity
-
+from recommender.src.Model import AutoEncoder
+from recommender.src.predict import predict
 path = 'recommender/data/'
 
 
-def train(batch_size=32, lr=0.001, epochs=50):
-    matrix = pd.read_csv(path + 'train_data.csv')
-    matrix = matrix.pivot_table(index='userId', columns='movieId', values='rating').fillna(0)
+def train(batch_size=32, lr=0.0001, epochs=50):
+    matrix = pd.read_csv(path + '/matrices/matrix.csv')
     print(matrix.head())
     num_movies = len(matrix.iloc[0])
 
@@ -39,45 +36,51 @@ def get_indices(df):
             dic[int(c)] = 0
     return dic
 
-'''
-index=500
-new_mat = pd.read_csv('reconstructed.csv')
-new_mat = new_mat.drop(['Unnamed: 0'],axis=1)
-array = new_mat.loc[index].to_numpy()
-print(array)
-tmp_user = get_indices(new_mat)
-lst = []
+path = 'recommender/data/'
 
-m = new_mat
-new_mat = new_mat.to_numpy()
-l = []
+movies = pd.read_csv(path + 'movies.csv')
+movies.set_index('movieId', inplace=True)
 
-for a in new_mat:
-    l.append(cosine_similarity(array.reshape(1,-1), a.reshape(1,-1)).reshape(1)[0])
-sim = l[0]
-for s in l:
-    if s > sim and l.index(s) != index:
-        sim = s
-print(sim)
-print(l.index(sim))
 
-for key in list(tmp_user.keys()):
-    if(tmp_user[key] != 0):
-        lst.append(key)
-user = m.loc[index]
-user = user.sort_values(ascending=False)
-indices = user.index[:10].tolist()
-vector = [int(i) for i in indices]
-for i in get_movies_for_user(vector):
-    print(i['title'], '---', i['genres'])
-print('----------------------------------------')
-user = m.loc[l.index(sim)]
-user = user.sort_values(ascending=False)
-indices = user.index[:10].tolist()
-vector = [int(i) for i in indices]
-k=0
-v = normalize(user.tolist()[:10])
-for i in get_movies_for_user(vector):
-    print(i['title'],'---',i['genres'],'score: ', v[k])
-    k+=1
-'''
+def get_movies_for_user(u_vector=[]):
+    to_ret = []
+    for id in u_vector:
+        to_ret.append(movies.loc[id])
+
+    return to_ret
+
+
+
+
+
+
+def popular_movies():
+    df = pd.read_csv(path + 'ratings.csv')
+    df = df.sort_values('movieId', ascending=True)
+    print(df)
+    current = 1
+    count = 0
+    lst = pd.DataFrame({'movieId': [], 'count': []}, dtype=int)
+    lst.append({'movieId': -1, 'rated': -1}, ignore_index=True)
+    for index, row in df.iterrows():
+        if row['movieId'] == current:
+            count += 1
+        else:
+            lst = lst.append({'movieId': int(current), 'count': count}, ignore_index=True)
+            print('movie ' + str(current) + ' count ' + str(count) + ' users')
+            current = row['movieId']
+            count = 1
+    lst = lst.append({'movieId': int(current), 'count': count}, ignore_index=True)
+    lst.to_csv(path + 'popular_movies.csv')
+    return {'Status': 'Successfuly finished'}
+
+
+def get_popular_movies(topn=20):
+    df = pd.read_csv(path + 'popular_movies.csv')
+    df = df.sort_values('count', ascending=False)
+    lst = []
+    for index, row in df.head(topn).iterrows():
+        lst.append(row['movieId'])
+
+    return id_to_tmdb(lst)
+

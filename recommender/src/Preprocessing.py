@@ -16,9 +16,9 @@ class Data:
         if create:
             self.save_new_movies(1970)
             self.load_ratings('new_ratings.csv')
-            self.count_ratings()
-            self.create_merged_interactions()
-            self.clean_data()
+            # self.count_ratings()
+            # self.create_merged_interactions()
+            # self.clean_data()
             self.create_matrices(chunks=False)
 
 
@@ -144,12 +144,5 @@ class Data:
                     .to_csv(m_dir + 'matrix.csv')
 
 
-
-
-
-
-
-
-
-data = Data(path, create=True)
+data = Data(path, True)
 
