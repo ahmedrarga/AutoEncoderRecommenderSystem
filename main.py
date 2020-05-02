@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-from recommender.src.System import get_popular_movies, popular_movies, train
+from recommender.src.System import *
 app = Flask(__name__)
 
 
@@ -8,13 +8,19 @@ def index():
     return 'Movie recommender system using deep auto-encoders with collaborative filtering approach'
 
 
-@app.route('/api/popular_movies/<int:topn>')
-def get_popular(topn=20):
+@app.route('/api/popular_movies')
+def get_popular():
+    args = request.args.to_dict()
+    try:
+        topn = int(args['topn'])
+    except (KeyError, ValueError) as e:
+        return jsonify({'Error': str(e)})
+
     return jsonify({'popular_movies': get_popular_movies(topn)})
 
 
 @app.route('/admin/create_popular_movies/<string:pwd>')
-def create_popular(pwd='123456'):
+def create_popular(pwd='1'):
     if pwd == '123456':
         return jsonify(popular_movies())
     else:
@@ -22,7 +28,7 @@ def create_popular(pwd='123456'):
 
 
 @app.route('/admin/train/<string:pwd>')
-def train_model(pwd='123456'):
+def train_model(pwd='1'):
     if pwd == '123456':
         args = request.args.to_dict()
         try:
@@ -33,9 +39,18 @@ def train_model(pwd='123456'):
         return jsonify({'Error': 'Authentication failed'})
 
 
-
-
-
+@app.route('/api/recommendations')
+def get_recs():
+    try:
+        import ast
+        args = request.args.to_dict()
+        email, vector = args['user'], ast.literal_eval(args['hist'])
+        if not (type(vector) is dict):
+            return jsonify({'Error': 'Wrong user history representation'})
+        else:
+            return jsonify(recommendations((email, vector)))
+    except (KeyError, ValueError, Exception) as e:
+        return jsonify({'Error': str(e)})
 
 
 if __name__ == '__main__':

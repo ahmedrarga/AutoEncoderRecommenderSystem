@@ -1,6 +1,6 @@
 import pandas as pd
 from recommender.src.Model import AutoEncoder
-from recommender.src.predict import predict
+from recommender.src.predict import *
 path = 'recommender/data/'
 
 
@@ -42,16 +42,26 @@ movies = pd.read_csv(path + 'movies.csv')
 movies.set_index('movieId', inplace=True)
 
 
-def get_movies_for_user(u_vector=[]):
-    to_ret = []
-    for id in u_vector:
-        to_ret.append(movies.loc[id])
+def recommendations(user):
+    mail, flag = user[0], False
+    vector = user[1]
+    users = pd.read_csv(path + 'tv-base/users.csv')
+    user_id = 0
+    for index, row in users.iterrows():
+        if row['email'] == mail:
+            flag = True
+            user_id = row['userId']
+    if not flag:
+        user_id = len(users['userId']) + 1
+        users = users.append({'userId': user_id, 'email': mail}, ignore_index=True)
+        users.to_csv(path + 'tv-base/users.csv', index=False)
+        ratings = pd.read_csv(path + 'tv-base/ratings.csv')
+        for key in vector.keys():
+            ratings = ratings.append({'userId': user_id, 'movieId': key, 'rating': vector[key]}, ignore_index=True)
+            ratings = ratings.sort_values(by=['userId'])
+            ratings.to_csv(path + 'tv-base/ratings.csv', index=False)
 
-    return to_ret
-
-
-
-
+    return recommend(vector, as_tmdb=True)
 
 
 def popular_movies():
