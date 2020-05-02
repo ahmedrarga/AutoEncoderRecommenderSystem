@@ -12,14 +12,16 @@ with open('recommender/data/v.txt', 'r') as f:
 path = 'recommender/models/model-v' + str(version - 1)
 matrix = pd.read_csv(path + '/reconstructed.csv')
 matrix = matrix.drop(['Unnamed: 0', 'userId'], axis=1)
-np_matrix = matrix.to_numpy(dtype=np.float)
+print(matrix.shape)
 
+np_matrix = matrix.to_numpy(dtype=np.float)
+print(np_matrix.shape)
 
 def predict(user):
     sim_array = cosine_similarity(np_matrix, user.reshape(1, -1))
     max_score, index, i = sim_array[3][0], 0, 0
     for sim in sim_array:
-        if max_score < sim[0] and i != 0:
+        if max_score < sim[0]:
             max_score = sim[0]
             index = i
         i += 1
@@ -62,8 +64,9 @@ def id_to_tmdb(lst=[]):
 
 def recommend(user, topn=10, as_tmdb=False):
     user = create_vector(user)
+    print(user)
     array = np.asarray(replace(list(user.values()), to_replace=0))
-    print(array)
+    print(len(array))
     index, max_score = predict(array)
     print('index: ', index, ' with score: ', max_score)
     similar_user = matrix.loc[index].sort_values(ascending=False)
@@ -76,16 +79,24 @@ def recommend(user, topn=10, as_tmdb=False):
 
 def create_vector(user):
     indices = dict().fromkeys([int(i) for i in matrix.columns.to_list()])
+    print(len(indices))
     for id in user.keys():
         try:
-            indices[id] = user[id]
+            i = tmdb_to_id(id)
+            indices.update({i : user[id]})
+            indices[i] = user[i]
         except KeyError:
             continue
+    print(len(indices))
     return indices
 
 
 def replace(lst, to_replace=0):
-    for index, value in enumerate(lst):
-        if value is None:
-            lst[index] = to_replace
-    return lst
+    new = []
+    for val in lst:
+        if not (val is None):
+            new.append(val)
+        else:
+            new.append(to_replace)
+    print(list(filter(lambda x : x != 0, new)))
+    return new
