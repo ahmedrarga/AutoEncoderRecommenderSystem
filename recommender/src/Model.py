@@ -5,7 +5,6 @@ from keras.models import model_from_json
 
 
 import os
-import matplotlib.pyplot as plt
 
 
 class AutoEncoder:
@@ -105,16 +104,7 @@ class AutoEncoder:
         model.load_weights(path + '/model_weights.h5')
         return model
 
-    @staticmethod
-    def plot(history):
-        # Plot training & validation loss values
-        plt.plot(history.history['loss'])
-        plt.plot(history.history['val_loss'])
-        plt.title('Model loss')
-        plt.ylabel('Loss')
-        plt.xlabel('Epoch')
-        plt.legend(['Train', 'Test'], loc='upper left')
-        plt.show()
+
 
 '''
 df = pd.read_csv('../data/chunks/chunk1.csv')

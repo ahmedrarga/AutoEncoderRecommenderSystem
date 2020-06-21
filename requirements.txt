@@ -4,5 +4,4 @@ pandas==1.0.3
 Keras==2.1.5
 tensorflow==1.15.2
 sklearn==0.0
-matplotlib==2.2.2
 numpy==1.17.2
