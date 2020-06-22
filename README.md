@@ -1,7 +1,7 @@
 # AutoEncoderRecommenderSystem
 Deep auto encoder for movie recommendation system
 
-1. This is a flask api app, to run it you need to install the frameworks in requirements, on ubuntu.txt: 
+1. This is a flask api app, to run it you need to install the frameworks in requirements.txt, on ubuntu: 
   pip3 install -r requirements.txt
   
 2. cd into project directory and run main.py:
