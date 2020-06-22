@@ -29,7 +29,7 @@ def create_popular(pwd='1'):
 
 @app.route('/admin/train/<string:pwd>')
 def train_model(pwd='1'):
-    if pwd == '123456':
+    if pwd == 'finalproject1212ahmad':
         args = request.args.to_dict()
         try:
             return jsonify({"train": train(int(args['batch_size']), float(args['lr']), int(args['epochs']))})

@@ -58,7 +58,7 @@ class AutoEncoder:
         if self.model is None:
             self.model = self.build_model(X.shape[1])
         print('Begin training ...')
-        self.model.compile(optimizer=Adam(lr=self.lr), loss='binary_crossentropy')
+        self.model.compile(optimizer=Adam(lr=self.lr), loss='mse')
         hist = self.model.fit(x=X, y=y,
                               epochs=self.epochs,
                               batch_size=self.batch_size,
@@ -106,21 +106,7 @@ class AutoEncoder:
 
 
 
-'''
-df = pd.read_csv('../data/chunks/chunk1.csv')
-matrix = df.pivot_table(index='userId', columns='movieId', values='rating').fillna(0)
-print(matrix.head())
-num_movies = len(matrix.iloc[0])
-num_users = len(df['userId'])
 
-
-model = AutoEncoder(32,0.01,20)
-model.build_model(num_movies)
-model.train(matrix.values,matrix.values)
-new = model.reconstruct(matrix)
-print(new)
-pd.DataFrame(new).to_csv('reconstructed.csv')
-'''
 
 
 

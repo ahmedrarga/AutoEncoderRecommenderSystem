@@ -10,7 +10,7 @@ with open('recommender/data/v.txt', 'r') as f:
         version = 1
 
 path = 'recommender/models/model-v' + str(version - 1)
-matrix = pd.read_csv('recommender/data' + '/train_data.csv').pivot(index='userId', columns='movieId', values='rating').fillna(0)
+matrix = pd.read_csv('recommender/src/reconstructed.csv')
 try:
     matrix = matrix.drop(['Unnamed: 0', 'userId'], axis=1)
 except:

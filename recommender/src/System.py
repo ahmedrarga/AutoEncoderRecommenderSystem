@@ -94,3 +94,26 @@ def get_popular_movies(topn=20):
 
     return id_to_tmdb(lst)
 
+
+if __name__ == '__main__':
+    inp = 0
+    print("pick a number to choose:")
+    print("1. train model")
+    print("2. get predictions")
+    print("3. get popular movies")
+    print("4. exit")
+
+    inp = int(input("choose number: "))
+    if inp == 1:
+        train()
+    elif inp == 2:
+        print("Enter the history: ", "such: user=1&hist={3:5, 100:4.5 ...}")
+        user = input("Data: ")
+        recommendations(user)
+    elif inp == 3:
+        get_popular_movies()
+    elif inp == 4:
+        exit(0)
+
+
+
